@@ -1,6 +1,7 @@
 %NORMALIZEIMAGE - standardise the intensity values in an image by adjusting
 %the range of grey-level values so that it lies within a desired range of 
-%values.
+%values. Using zero-mean and unit-variance is the most common method for 
+%normalization and is generally used widely.
 % 
 %Usage:    normalizedImage = normalizeImage(originalImage, desiredMean, desiredVar)
 % 
@@ -22,7 +23,9 @@ if nargin ~= 3
 end
 
 %% Estimation of normalization
-originalImage = double(originalImage);
+if ~isa(originalImage, 'double')
+    originalImage = double(originalImage);
+end
 meanImage = mean(originalImage(:));
 normalizedImage = (originalImage - meanImage)/std(originalImage(:));
 normalizedImage = normalizedImage*sqrt(desiredVar);
