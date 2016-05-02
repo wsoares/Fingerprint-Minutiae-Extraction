@@ -11,24 +11,6 @@ end
 if ~isa(img, 'double')
     img = double(img);
 end
-%% Adjusting the size of the image according the window
-[row,col] = size(img);
-x = mod([row,col],window);
-if x(1) ~= 0    %including news rows if it isn't multiple of window
-    qtdRows = row - x(1);
-    newRow = img(row,1:col);
-    for i=1:qtdRows
-        img = vertcat(img,newRow);
-    end
-end
-if x(2) ~= 0    %including news cols if it isn't multiple of window
-    [row,col] = size(img);
-    qtdCols = col - x(2);
-    newCol = img(1:row,col);
-    for i=1:qtdCols
-        img = horzcat(img,newCol);
-    end
-end
 %% Calculating the variance of the image which it will be used as a threshold
 threshold = var(img(:),1);
 if threshold >= 0.1
@@ -46,6 +28,14 @@ for i=1:row/window
             mask(r(1):r(2),c(1):c(2)) = 0;
         end
     end
+end
+%% Adjusting the size of the image according the window
+x = mod([row,col],window);
+if x(1) ~= 0    %including news rows if it isn't multiple of window
+    mask(row - x(1):row, :) = 0;
+end
+if x(2) ~= 0    %including news cols if it isn't multiple of window
+    mask(:, col - x(2):col) = 0;
 end
 %% Applying close and opening operations.
 % These operations will make holes dissapear and the mask will be more
